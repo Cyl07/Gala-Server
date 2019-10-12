@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  title: GALA-A19-Server
+  description: BDSM (Base De Donnée sans Molosse)
+  version: 1.0.0
+servers:
+  - url: http://api.example.com/
+    description: Main server (don't know the exact adress for the momment)
+
+
+paths:
+  /buy/{user_UID}:
+    post:
+      summary: Validate a shopping-cart
+      parameters:
+        - in: path
+          name: user_UID
+          schema:
+            type: string
+          required: true
+          description: UID of the user
+      requestBody:
+        description: Arguments to buy a product
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counter_id:
+                  type: string
+                  description: The MAC adress of the computer
+                shopping_cart:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product_code:
+                        type: string
+                        description: Code corresponding to the product
+                      quantity:
+                        type: integer
+                        description: Quantity of the product bought
+                    required:
+                      - product_code
+                      - quantity
+                  minItems: 1
+              required:
+                - counter_id
+                - shopping_cart                    
+      responses:
+        '200':
+          description: Transaction done
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_UID:
+                    type: string
+                    description: UID of the user
+                  user_balance:
+                    type: number
+                    description: Money left of the user
+                required:
+                  - user_id
+                  - user_balance
+        '401':
+          description: You don't have enough money
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    description: Card UID of the user
+                  user_balance:
+                    type: integer
+                    description: Money left of the user
+                required:
+                  - user_id
+                  - user_balance
+        '404':
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /refilling/{user_UID}:
+    post:
+      summary: Credit a account or create an account
+      parameters:
+        - in: path
+          name: user_UID
+          schema:
+            type: string
+          required: true
+          description: UID of the user
+      requestBody:
+        description: Arguments to create or credit a user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counter_id:
+                  type: string
+                  description: The MAC adress of the computer
+                amount:
+                  type: number
+                  description: The amount you want to credit
+              required:
+                - counter_id
+                - amount
+      responses:
+        '200':
+          description: Creditation done
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_UID:
+                    type: string
+                    description: Card UID of the user
+                  user_balance:
+                    type: number
+                    description: Amount you credited
+                required:
+                  - user_id
+                  - amount
+  /get_general_history/{history_size}:
+    post:
+      summary: Get the general history
+      parameters:
+        - in: path
+          name: history_size
+          schema:
+            type: integer
+          required: true
+          description: Number of element you want to get
+      responses:
+        '200':
+          description: General history send
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_id:
+                      type: string
+                      description: Card UID of the user
+                    counter_id:
+                      type: string
+                      description: The MAC adress of the computer
+                    chopping_cart:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_code:
+                            type: string
+                            description: Code corresponding to the product
+                          quantity:
+                            type: integer
+                            description: Quantity of the product bought
+                        required:
+                          - product_code
+                          - quantity
+                      minItems: 1                  
+                  required:
+                      - user_id
+                      - counter_id
+                      - chopping_cart
+                  minItems: 1
+  /get_user_history/{user_id}/{history_size}:
+    post:
+      summary: Get the specifier user history
+      parameters:
+        - in: path
+          name: history_size
+          schema:
+            type: integer
+          required: true
+          description: Number of element you want to get
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: ID of the user
+      responses:
+        '200':
+          description: User history send
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_id:
+                      type: string
+                      description: Card UID of the user
+                    counter_id:
+                      type: string
+                      description: The MAC adress of the computer
+                    chopping_cart:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_code:
+                            type: string
+                            description: Code corresponding to the product
+                          quantity:
+                            type: integer
+                            description: Quantity of the product bought
+                        required:
+                          - product_code
+                          - quantity
+                      minItems: 1                  
+                  required:
+                      - user_id
+                      - counter_id
+                      - chopping_cart
+                minItems: 1
+        '404':
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /get_counter_history/{counter_id}/{history_size}:
+    post:
+      summary: Get the specifier counter history
+      parameters:
+        - in: path
+          name: history_size
+          schema:
+            type: integer
+          required: true
+          description: Number of element you want to get
+        - in: path
+          name: counter_id
+          schema:
+            type: string
+          required: true
+          description: ID of the counter
+      responses:
+        '200':
+          description: Counter history send
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_id:
+                      type: string
+                      description: Card UID of the user
+                    counter_id:
+                      type: string
+                      description: The MAC adress of the computer
+                    chopping_cart:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_code:
+                            type: string
+                            description: Code corresponding to the product
+                          quantity:
+                            type: integer
+                            description: Quantity of the product bought
+                        required:
+                          - product_code
+                          - quantity
+                      minItems: 1                  
+                  required:
+                      - user_id
+                      - counter_id
+                      - chopping_cart
+                  minItems: 1
+        '404':
+          description: Counter not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /undo_transaction/{transaction_id}:
+    post:
+      summary: Undo a transaction
+      parameters:
+        - in: path
+          name: transaction_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the transaction
+      responses:
+        '200':
+          description: Transaction undone
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    description: ID of the user
+                  user_balance:
+                    type: number
+                    description: Money left of the user
+                required:
+                  - user_id
+                  - user_balance
+        '404':
+          description: Transaction not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /get_counter_articles/{counter_id}:
+    post: 
+      summary: get all articles link to the counter
+      parameters:
+        - in: path
+          name: counter_id
+          schema: 
+            type: integer
+          required: true
+          description: Numeric ID of the counter
+      responses:
+        '404':
+          description: Counter not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '200':
+          description: Articles send
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    article_id:
+                      type: integer
+                      description: Numeric ID of the article
+                    article_code:
+                      type: string
+                      description: Code of the article
+                    article_name:
+                      type: string
+                      description: Name of the article
+                    article_price:
+                      type: number
+                      description: Default price of the article
+                    happy_hour:
+                      type: array
+                      items:
+                        type: object
+                        properties: 
+                          starting_hour:
+                            type: string
+                            format: date-time
+                            description: start of the happy hour
+                          ending_hour:
+                            type: string
+                            format: date-time
+                            description: end of the happy hour
+                          price:
+                            type: number
+                            description: price during the happy hour
+                        required:
+                          - starting_hour
+                          - ending_hour
+                          - price
+                    categorie:
+                      type: string
+                      description: categorie of the article
+                    sub_categorie:
+                      type: string
+                      description: sub_categorie of the article
+                  required:
+                    - article_id
+                    - article_code
+                    - article_name
+                    - article_price
+                    - categorie
+                    - sub_categorie
+                minItems: 1
+  /transfer_money:
+    post:
+      summary: Transfer money from a user to another
+      requestBody:
+        description: Arguments to transfer money from user2 to user1
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user1_id:
+                  type: string
+                  description: ID of the user who will receive the money
+                user2_id:
+                  type: string
+                  description: ID of the user who will give money
+                amount:
+                  type: number
+                  description: Amount of money you want to transfer
+              required:
+                - user1_id
+                - user2_id
+                - amount
+      responses:
+        '404':
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: You don't have enough money
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    description: User who don't have enough money
+                  user_balance:
+                    type: number
+                    description: money left of the user
+                required:
+                  - user_id
+                  - user_balance
+        '200':
+          description: Transfer done
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user1_id:
+                    type: string
+                    description: User who get the money
+                  user1_balance:
+                    type: number
+                    description: New amount of money of the user1
+                  user2_id:
+                    type: string
+                    description: User who get the money
+                  user2_balance:
+                    type: number
+                    description: New amount of money of the user2
+                required:
+                  - user1_id
+                  - user1_balance
+                  - user2_id
+                  - user2_balance
+  
