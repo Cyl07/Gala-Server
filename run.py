@@ -1,7 +1,5 @@
 from galaapp import app
 
 if __name__ == "__main__":
-    app.run(debug=True)
-# http://proxy.utbm.fr:3128
-# auto proxy: http://utbm.fr/proxy.pac
+    app.run(host="0.0.0.0", debug=True)
 

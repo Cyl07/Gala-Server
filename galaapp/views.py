@@ -269,8 +269,9 @@ def refund(transaction_id):
     else:
         return "Transaction not found", 404
 
+
 @app.route("/transfer_money", methods=["POST"])
-def transfer_money:
+def transfer_money():
     req_data = json.loads(request.data)
     user1 = db.session.query(User).filter_by(UID=req_data["user1_UID"]).first()
     user2 = db.session.query(User).filter_by(UID=req_data["user2_UID"]).first()
@@ -279,8 +280,15 @@ def transfer_money:
             user2.money -= req_data["amount"]
             user1.money += req_data["amount"]
             db.session.commit()
-            return jsonify({"user1_UID" : user1.UID, "user1_balance": user1.money, "user2_UID": user2.UID,"user2_balance": user2.money})
+            return jsonify(
+                {
+                    "user1_UID": user1.UID,
+                    "user1_balance": user1.money,
+                    "user2_UID": user2.UID,
+                    "user2_balance": user2.money,
+                }
+            )
         else:
-            return jsonify({"user_UID" : user2.UID, "user_balance" : user2.money}), 401
+            return jsonify({"user_UID": user2.UID, "user_balance": user2.money}), 401
     else:
         return "User not found", 404
