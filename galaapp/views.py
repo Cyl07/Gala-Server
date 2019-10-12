@@ -20,9 +20,11 @@ def refilling(user_UID):
         db.session.add(user)
 
     transaction = Transaction()
-    transaction.user_id = user.UID
+    transaction.user_UID = user.UID
     transaction.counter_id = req_data["counter_id"]
-    transaction.rebuy = float(req_data["amount"])
+    transaction.computer_MAC = req_data["computer_MAC"]
+    transaction.amount = req_data["amount"]
+    transaction.time = datetime.datetime.now()
     db.session.add(transaction)
     db.session.commit()
 
@@ -35,7 +37,14 @@ def buy(user_UID):
     user = db.session.query(User).filter_by(UID="%s" % user_UID).first()
     products = req_data["shopping_cart"]
     total = 0
-    in_hh = False
+    shop_cart = []
+
+    transaction = Transaction()
+    transaction.user_UID = user.UID
+    transaction.counter_id = req_data["counter_id"]
+    transaction.computer_MAC = req_data["computer_MAC"]
+    transaction.time = datetime.datetime.now()
+    db.session.add(transaction)
 
     if user:
         for product in products:
@@ -60,12 +69,19 @@ def buy(user_UID):
                             product["quantity"]
                         )
 
+                product_quantity = Product_quantity()
+                product_quantity.product_code = pdt.code
+                product_quantity.quantity = product["quantity"]
+                db.session.add(product_quantity)
+                transaction.products_quantity.append(product_quantity)
+
                 total += product_cost
             else:
                 return "product not found", 404
 
         if total <= user.money:
             user.money -= total
+            transaction.amount = -total
             db.session.commit()
             return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
         else:
@@ -91,7 +107,6 @@ def get_counter_products(counter_id):
                 happy_hours.append(happy_hour_dic)
 
             product_dic = {
-                "id": product.id,
                 "code": product.code,
                 "name": product.name,
                 "price": product.price,
@@ -104,3 +119,37 @@ def get_counter_products(counter_id):
         return jsonify(products), 200
     else:
         return "Counter not found", 404
+
+
+@app.route("/get_general_history/<int:history_size>", methods=["POST"])
+def get_general_history(history_size):
+    transactions = (
+        db.session.query(Transaction)
+        .order_by(Transaction.id.desc())
+        .slice(0, history_size)
+    )
+    if transactions:
+        trans_list = []
+        for transaction in transactions:
+            shopping_cart = []
+            for product_quantity in transaction.products_quantity:
+                shopping_cart.append(
+                    {
+                        "product_code": product_quantity.product_code,
+                        "quantity": product_quantity.quantity,
+                    }
+                )
+
+            trans_list.append(
+                {
+                    "user_UID": transaction.user_UID,
+                    "counter_id": transaction.counter_id,
+                    "computer_MAC": transaction.computer_MAC,
+                    "shopping_cart": shopping_cart,
+                    "amount": transaction.amount,
+                    "time": transaction.time,
+                }
+            )
+        return jsonify(trans_list), 200
+    else:
+        return "Nope", 404

@@ -4,8 +4,8 @@ info:
   description: BDSM (Base De Donnée sans Molosse)
   version: 1.0.0
 servers:
-  - url: http://api.example.com/
-    description: Main server (don't know the exact adress for the momment)
+  - url: http://127.0.0.1/
+    description: Local server
 
 
 paths:
@@ -28,8 +28,11 @@ paths:
               type: object
               properties:
                 counter_id:
+                  type: integer
+                  description: ID of the counter
+                computer_MAC:
                   type: string
-                  description: The MAC adress of the computer
+                  description: MAC adress of the computer
                 shopping_cart:
                   type: array
                   items:
@@ -47,7 +50,8 @@ paths:
                   minItems: 1
               required:
                 - counter_id
-                - shopping_cart                    
+                - computer_MAC
+                - shopping_cart           
       responses:
         '200':
           description: Transaction done
@@ -63,7 +67,7 @@ paths:
                     type: number
                     description: Money left of the user
                 required:
-                  - user_id
+                  - user_UID
                   - user_balance
         '401':
           description: You don't have enough money
@@ -72,14 +76,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  user_id:
+                  user_UID:
                     type: string
                     description: Card UID of the user
                   user_balance:
                     type: integer
                     description: Money left of the user
                 required:
-                  - user_id
+                  - user_UID
                   - user_balance
         '404':
           description: User not found
@@ -106,13 +110,17 @@ paths:
               type: object
               properties:
                 counter_id:
+                  type: integer
+                  description: ID of the counter
+                computer_MAC:
                   type: string
-                  description: The MAC adress of the computer
+                  description: MAC adress of the computer
                 amount:
                   type: number
                   description: The amount you want to credit
               required:
                 - counter_id
+                - computer_MAC
                 - amount
       responses:
         '200':
@@ -129,8 +137,8 @@ paths:
                     type: number
                     description: Amount you credited
                 required:
-                  - user_id
-                  - amount
+                  - user_UID
+                  - user_balance
   /get_general_history/{history_size}:
     post:
       summary: Get the general history
@@ -151,13 +159,23 @@ paths:
                 items:
                   type: object
                   properties:
-                    user_id:
+                    user_UID:
                       type: string
                       description: Card UID of the user
                     counter_id:
+                      type: integer
+                      description: ID of the counter
+                    computer_MAC:
                       type: string
-                      description: The MAC adress of the computer
-                    chopping_cart:
+                      description: MAC adress of the computer
+                    amount:
+                      type: number
+                      description: amount when you refill your card
+                    time:
+                      type: string
+                      format: date-time
+                      description: datetime of the transaction
+                    shopping_cart:
                       type: array
                       items:
                         type: object
@@ -173,11 +191,11 @@ paths:
                           - quantity
                       minItems: 1                  
                   required:
-                      - user_id
+                      - user_UID
                       - counter_id
-                      - chopping_cart
+                      - computer_MAC
                   minItems: 1
-  /get_user_history/{user_id}/{history_size}:
+  /get_user_history/{user_UID}/{history_size}:
     post:
       summary: Get the specifier user history
       parameters:
@@ -188,11 +206,11 @@ paths:
           required: true
           description: Number of element you want to get
         - in: path
-          name: user_id
+          name: user_UID
           schema:
             type: string
           required: true
-          description: ID of the user
+          description: UID of the user
       responses:
         '200':
           description: User history send
@@ -203,13 +221,20 @@ paths:
                 items:
                   type: object
                   properties:
-                    user_id:
+                    user_UID:
                       type: string
                       description: Card UID of the user
                     counter_id:
+                      type: integer
+                      description: ID of the counter
+                    computer_MAC:
                       type: string
-                      description: The MAC adress of the computer
-                    chopping_cart:
+                      description: MAC adress of the computer
+                    time:
+                      type: string
+                      format: date-time
+                      description: datetime of the transaction
+                    shopping_cart:
                       type: array
                       items:
                         type: object
@@ -225,9 +250,10 @@ paths:
                           - quantity
                       minItems: 1                  
                   required:
-                      - user_id
+                      - user_UID
                       - counter_id
-                      - chopping_cart
+                      - computer_MAC
+                      - shopping_cart
                 minItems: 1
         '404':
           description: User not found
@@ -248,7 +274,7 @@ paths:
         - in: path
           name: counter_id
           schema:
-            type: string
+            type: integer
           required: true
           description: ID of the counter
       responses:
@@ -261,13 +287,20 @@ paths:
                 items:
                   type: object
                   properties:
-                    user_id:
+                    user_UID:
                       type: string
                       description: Card UID of the user
                     counter_id:
+                      type: integer
+                      description: ID of the counter
+                    computer_MAC:
                       type: string
-                      description: The MAC adress of the computer
-                    chopping_cart:
+                      description: MAC adress of the computer
+                    time:
+                      type: string
+                      format: date-time
+                      description: datetime of the transaction
+                    shopping_cart:
                       type: array
                       items:
                         type: object
@@ -283,9 +316,10 @@ paths:
                           - quantity
                       minItems: 1                  
                   required:
-                      - user_id
+                      - user_UID
                       - counter_id
-                      - chopping_cart
+                      - computer_MAC
+                      - shopping_cart
                   minItems: 1
         '404':
           description: Counter not found
@@ -311,14 +345,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  user_id:
+                  user_UID:
                     type: string
-                    description: ID of the user
+                    description: UID of the user
                   user_balance:
                     type: number
                     description: Money left of the user
                 required:
-                  - user_id
+                  - user_UID
                   - user_balance
         '404':
           description: Transaction not found
@@ -328,7 +362,7 @@ paths:
                 type: string
   /get_counter_products/{counter_id}:
     post: 
-      summary: get all articles link to the counter
+      summary: get all products link to the counter
       parameters:
         - in: path
           name: counter_id
@@ -352,9 +386,6 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: integer
-                      description: Numeric ID of the product
                     code:
                       type: string
                       description: Code of the product
@@ -391,10 +422,9 @@ paths:
                       type: string
                       description: sub_categorie of the product
                   required:
-                    - article_id
-                    - article_code
-                    - article_name
-                    - article_price
+                    - code
+                    - name
+                    - price
                     - categorie
                     - sub_categorie
                 minItems: 1
@@ -409,18 +439,18 @@ paths:
             schema:
               type: object
               properties:
-                user1_id:
+                user1_UID:
                   type: string
-                  description: ID of the user who will receive the money
-                user2_id:
+                  description: UID of the user who will receive the money
+                user2_UID:
                   type: string
-                  description: ID of the user who will give money
+                  description: UID of the user who will give money
                 amount:
                   type: number
                   description: Amount of money you want to transfer
               required:
-                - user1_id
-                - user2_id
+                - user1_UID
+                - user2_UID
                 - amount
       responses:
         '404':
@@ -436,14 +466,14 @@ paths:
               schema: 
                 type: object
                 properties:
-                  user_id:
+                  user_UID:
                     type: string
                     description: User who don't have enough money
                   user_balance:
                     type: number
                     description: money left of the user
                 required:
-                  - user_id
+                  - user_UID
                   - user_balance
         '200':
           description: Transfer done
@@ -452,21 +482,21 @@ paths:
               schema:
                 type: object
                 properties:
-                  user1_id:
+                  user1_UID:
                     type: string
                     description: User who get the money
                   user1_balance:
                     type: number
                     description: New amount of money of the user1
-                  user2_id:
+                  user2_UID:
                     type: string
                     description: User who get the money
                   user2_balance:
                     type: number
                     description: New amount of money of the user2
                 required:
-                  - user1_id
+                  - user1_UID
                   - user1_balance
-                  - user2_id
+                  - user2_UID
                   - user2_balance
   
