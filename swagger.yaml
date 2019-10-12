@@ -315,7 +315,67 @@ paths:
                       - computer_MAC
                       - shopping_cart
                   minItems: 1
-  /undo_transaction/{transaction_id}:
+  /get_computer_history/{computer_MAC}/{history_size}:
+    post:
+      summary: Get the specifier computer history
+      parameters:
+        - in: path
+          name: history_size
+          schema:
+            type: integer
+          required: true
+          description: Number of element you want to get
+        - in: path
+          name: computer_MAC
+          schema:
+            type: string
+          required: true
+          description: MAC adress of the computer
+      responses:
+        '200':
+          description: computer history send
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_UID:
+                      type: string
+                      description: Card UID of the user
+                    counter_id:
+                      type: integer
+                      description: ID of the counter
+                    computer_MAC:
+                      type: string
+                      description: MAC adress of the computer
+                    time:
+                      type: string
+                      format: date-time
+                      description: datetime of the transaction
+                    shopping_cart:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_code:
+                            type: string
+                            description: Code corresponding to the product
+                          quantity:
+                            type: integer
+                            description: Quantity of the product bought
+                        required:
+                          - product_code
+                          - quantity
+                      minItems: 1                  
+                  required:
+                      - user_UID
+                      - counter_id
+                      - computer_MAC
+                      - shopping_cart
+                  minItems: 1
+  /refund/{transaction_id}:
     post:
       summary: Undo a transaction
       parameters:
@@ -325,6 +385,23 @@ paths:
             type: integer
           required: true
           description: Numeric ID of the transaction
+      requestBody:
+        description: Arguments to refund a user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counter_id:
+                  type: integer
+                  description: ID of the counter
+                computer_MAC:
+                  type: string
+                  description: MAC adress of the computer
+              required:
+                - counter_id
+                - computer_MAC
       responses:
         '200':
           description: Transaction undone

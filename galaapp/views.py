@@ -252,3 +252,35 @@ def get_computer_history(computer_MAC, history_size):
             }
         )
     return jsonify(trans_list), 200
+
+
+@app.route("/refund/<int:transaction_id>", methods=["POST"])
+def refund(transaction_id):
+    transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
+    if transaction:
+        user = db.session.query(User).filter_by(UID=transaction.user_UID).first()
+        if user:
+            user.money -= transaction.amount
+            db.session.delete(transaction)
+            db.session.commit()
+            return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
+        else:
+            return "User not found", 404
+    else:
+        return "Transaction not found", 404
+
+@app.route("/transfer_money", methods=["POST"])
+def transfer_money:
+    req_data = json.loads(request.data)
+    user1 = db.session.query(User).filter_by(UID=req_data["user1_UID"]).first()
+    user2 = db.session.query(User).filter_by(UID=req_data["user2_UID"]).first()
+    if user1 and user2:
+        if req_data["amount"] <= user2.money:
+            user2.money -= req_data["amount"]
+            user1.money += req_data["amount"]
+            db.session.commit()
+            return jsonify({"user1_UID" : user1.UID, "user1_balance": user1.money, "user2_UID": user2.UID,"user2_balance": user2.money})
+        else:
+            return jsonify({"user_UID" : user2.UID, "user_balance" : user2.money}), 401
+    else:
+        return "User not found", 404
