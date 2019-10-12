@@ -73,3 +73,34 @@ def buy(user_UID):
 
     else:
         return "User not found", 404
+
+
+@app.route("/get_counter_products/<int:counter_id>", methods=["POST"])
+def get_counter_products(counter_id):
+    counter = db.session.query(Counter).filter_by(id=counter_id).first()
+    products = []
+    if counter:
+        for product in counter.products:
+            happy_hours = []
+            for happy_hour in product.happy_hours:
+                happy_hour_dic = {
+                    "start": happy_hour.start,
+                    "end": happy_hour.end,
+                    "price": happy_hour.price,
+                }
+                happy_hours.append(happy_hour_dic)
+
+            product_dic = {
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "price": product.price,
+                "happy_hours": happy_hours,
+                "categorie": product.categorie,
+                "sub_categorie": product.sub_categorie,
+            }
+            products.append(product_dic)
+
+        return jsonify(products), 200
+    else:
+        return "Counter not found", 404
