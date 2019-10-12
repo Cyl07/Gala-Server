@@ -1,3 +1,5 @@
 env/
 galaapp/__pycache__/
 __pycache__/
+.vscode/
+app.db

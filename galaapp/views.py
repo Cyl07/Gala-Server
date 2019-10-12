@@ -7,25 +7,26 @@ app.config.from_object("config")
 from .models import *
 
 
-@app.route("/rebuy", methods=["POST"])
-def rebuy():
-
+@app.route("/refilling/<string:user_UID>", methods=["POST"])
+def refilling(user_UID):
     req_data = json.loads(request.data)
-    user = db.session.query(User).filter_by(UID=req_data["UID"]).first()
+    user = db.session.query(User).filter_by(UID="%s" % user_UID).first()
     if user:
-        user.money += float(req_data["money"])
+        user.money += float(req_data["amount"])
     else:
-        user = User(req_data["UID"], req_data["money"])
+        user = User()
+        user.UID = "%s" % user_UID
+        user.money = req_data["amount"]
         db.session.add(user)
 
-    transaction = Transfer(user.UID, req_data["MAC"])
-    transaction.rebuy = float(req_data["money"])
+    transaction = Transaction()
+    transaction.user_id = user.UID
+    transaction.counter_id = req_data["counter_id"]
+    transaction.rebuy = float(req_data["amount"])
     db.session.add(transaction)
     db.session.commit()
 
-    print(user.money)
-
-    return "Transaction done", 200
+    return jsonify({"user_UID": user.UID, "amount": user.money}), 200
 
 
 @app.route("/buy", methods=["POST"])

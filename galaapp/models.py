@@ -1,67 +1,70 @@
 from flask_sqlalchemy import SQLAlchemy
-
 from .views import app
 
+
 db = SQLAlchemy(app)
+
+inventory = db.Table(
+    "inventory",
+    db.Column("counter_id", db.Integer, db.ForeignKey("counter.id")),
+    db.Column("product_id", db.Integer, db.ForeignKey("product.id")),
+)
+
+shopping_cart = db.Table(
+    "shopping_cart",
+    db.Column("product_quantity_id", db.Integer, db.ForeignKey("product_quantity.id")),
+    db.Column("transaction_id", db.Integer, db.ForeignKey("transaction.id")),
+)
 
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(16), nullable=False)
     name = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    happy_hour_start = db.Column(db.DateTime)
-    happy_hour_end = db.Column(db.DateTime)
-    happy_hour_price = db.Column(db.Integer)
+    happy_hours = db.relationship("Happy_Hour", backref="product", lazy=True)
     categorie = db.Column(db.String(64), nullable=False)
     sub_categorie = db.Column(db.String(64), nullable=False)
+    counters = db.relationship(
+        "Counter", secondary=inventory, backref=db.backref("products", lazy="dynamic")
+    )
 
-    def __init__(self, name, price, categorie, sub_categorie):
-        self.name = name
-        self.price = price
-        self.categorie = categorie
-        self.sub_categorie = sub_categorie
 
-    def add_happy_hour(self, happy_hour_start, happy_hour_end, happy_hour_price):
-        self.happy_hour_start = happy_hour_start
-        self.happy_hour_end = happy_hour_end
-        self.happy_hour_price = happy_hour_price
+class Product_quantity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"))
+    quantity = db.Column(db.Integer, nullable=False)
+    shopping_carts = db.relationship(
+        "Transaction",
+        secondary=shopping_cart,
+        backref=db.backref("products_quantity", lazy="dynamic"),
+    )
+
+
+class Happy_Hour(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    start = db.Column(db.DateTime, nullable=False)
+    end = db.Column(db.DateTime, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
+
+
+class Counter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
 
 
 class User(db.Model):
-    UID = db.Column(db.Integer, primary_key=True)
-    money = db.Column(db.Integer, nullable=False)
-    transfers = db.relationship("Transfer", backref="user", lazy=True)
-
-    def __init__(self, UID, money):
-        self.UID = UID
-        self.money = money
-
-
-Shopping_Cart = db.Table(
-    "shopping cart",
-    db.Column(
-        "transfer_id", db.Integer, db.ForeignKey("transfer.id"), primary_key=True
-    ),
-    db.Column("product_id", db.Integer, db.ForeignKey("product.id"), primary_key=True),
-    db.Column("quantity", db.Integer, nullable=False),
-)
-
-
-class Transfer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.UID"), nullable=False)
-    MAC = db.Column(db.String(12), nullable=False)
-    rebuy = db.Column(db.Integer)
-    shopping_cart = db.relationship(
-        "Product",
-        secondary=Shopping_Cart,
-        lazy="subquery",
-        backref=db.backref("transfer", lazy=True),
-    )
+    UID = db.Column(db.String(32), nullable=False)
+    money = db.Column(db.Integer, nullable=False)
+    transactions = db.relationship("Transaction", backref="user", lazy=True)
 
-    def __init__(self, user_id, MAC):
-        self.user_id = user_id
-        self.MAC = MAC
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    counter_id = db.Column(db.String(32), nullable=False)
+    amount = db.Column(db.Integer)
 
 
 db.create_all()
