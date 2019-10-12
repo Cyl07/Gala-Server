@@ -128,28 +128,123 @@ def get_general_history(history_size):
         .order_by(Transaction.id.desc())
         .slice(0, history_size)
     )
-    if transactions:
-        trans_list = []
-        for transaction in transactions:
-            shopping_cart = []
-            for product_quantity in transaction.products_quantity:
-                shopping_cart.append(
-                    {
-                        "product_code": product_quantity.product_code,
-                        "quantity": product_quantity.quantity,
-                    }
-                )
-
-            trans_list.append(
+    trans_list = []
+    for transaction in transactions:
+        shopping_cart = []
+        for product_quantity in transaction.products_quantity:
+            shopping_cart.append(
                 {
-                    "user_UID": transaction.user_UID,
-                    "counter_id": transaction.counter_id,
-                    "computer_MAC": transaction.computer_MAC,
-                    "shopping_cart": shopping_cart,
-                    "amount": transaction.amount,
-                    "time": transaction.time,
+                    "product_code": product_quantity.product_code,
+                    "quantity": product_quantity.quantity,
                 }
             )
-        return jsonify(trans_list), 200
-    else:
-        return "Nope", 404
+
+        trans_list.append(
+            {
+                "user_UID": transaction.user_UID,
+                "counter_id": transaction.counter_id,
+                "computer_MAC": transaction.computer_MAC,
+                "shopping_cart": shopping_cart,
+                "amount": transaction.amount,
+                "time": transaction.time,
+            }
+        )
+    return jsonify(trans_list), 200
+
+
+@app.route("/get_user_history/<string:user_UID>/<int:history_size>", methods=["POST"])
+def get_user_history(user_UID, history_size):
+    transactions = (
+        db.session.query(Transaction)
+        .filter_by(user_UID=user_UID)
+        .order_by(Transaction.id.desc())
+        .slice(0, history_size)
+    )
+    trans_list = []
+    for transaction in transactions:
+        shopping_cart = []
+        for product_quantity in transaction.products_quantity:
+            shopping_cart.append(
+                {
+                    "product_code": product_quantity.product_code,
+                    "quantity": product_quantity.quantity,
+                }
+            )
+
+        trans_list.append(
+            {
+                "user_UID": transaction.user_UID,
+                "counter_id": transaction.counter_id,
+                "computer_MAC": transaction.computer_MAC,
+                "shopping_cart": shopping_cart,
+                "amount": transaction.amount,
+                "time": transaction.time,
+            }
+        )
+    return jsonify(trans_list), 200
+
+
+@app.route("/get_counter_history/<int:counter_id>/<int:history_size>", methods=["POST"])
+def get_counter_history(counter_id, history_size):
+    transactions = (
+        db.session.query(Transaction)
+        .filter_by(counter_id=counter_id)
+        .order_by(Transaction.id.desc())
+        .slice(0, history_size)
+    )
+    trans_list = []
+    for transaction in transactions:
+        shopping_cart = []
+        for product_quantity in transaction.products_quantity:
+            shopping_cart.append(
+                {
+                    "product_code": product_quantity.product_code,
+                    "quantity": product_quantity.quantity,
+                }
+            )
+
+        trans_list.append(
+            {
+                "user_UID": transaction.user_UID,
+                "counter_id": transaction.counter_id,
+                "computer_MAC": transaction.computer_MAC,
+                "shopping_cart": shopping_cart,
+                "amount": transaction.amount,
+                "time": transaction.time,
+            }
+        )
+    return jsonify(trans_list), 200
+
+
+@app.route(
+    "/get_computer_history/<string:computer_MAC>/<int:history_size>", methods=["POST"]
+)
+def get_computer_history(computer_MAC, history_size):
+    transactions = (
+        db.session.query(Transaction)
+        .filter_by(computer_MAC=computer_MAC)
+        .order_by(Transaction.id.desc())
+        .slice(0, history_size)
+    )
+    trans_list = []
+    for transaction in transactions:
+        shopping_cart = []
+        for product_quantity in transaction.products_quantity:
+            shopping_cart.append(
+                {
+                    "product_code": product_quantity.product_code,
+                    "quantity": product_quantity.quantity,
+                }
+            )
+
+        trans_list.append(
+            {
+                "user_UID": transaction.user_UID,
+                "counter_id": transaction.counter_id,
+                "computer_MAC": transaction.computer_MAC,
+                "shopping_cart": shopping_cart,
+                "amount": transaction.amount,
+                "time": transaction.time,
+            }
+        )
+    return jsonify(trans_list), 200

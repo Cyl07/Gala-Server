@@ -255,12 +255,6 @@ paths:
                       - computer_MAC
                       - shopping_cart
                 minItems: 1
-        '404':
-          description: User not found
-          content:
-            text/plain:
-              schema:
-                type: string
   /get_counter_history/{counter_id}/{history_size}:
     post:
       summary: Get the specifier counter history
@@ -321,12 +315,6 @@ paths:
                       - computer_MAC
                       - shopping_cart
                   minItems: 1
-        '404':
-          description: Counter not found
-          content:
-            text/plain:
-              schema:
-                type: string
   /undo_transaction/{transaction_id}:
     post:
       summary: Undo a transaction
