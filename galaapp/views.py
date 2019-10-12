@@ -26,38 +26,50 @@ def refilling(user_UID):
     db.session.add(transaction)
     db.session.commit()
 
-    return jsonify({"user_UID": user.UID, "amount": user.money}), 200
+    return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
 
 
-@app.route("/buy", methods=["POST"])
-def buy():
+@app.route("/buy/<string:user_UID>", methods=["POST"])
+def buy(user_UID):
     req_data = json.loads(request.data)
-    user = db.session.query(User).filter_by(UID=req_data["UID"]).first()
-    products = req_data["Shopping_cart"]
+    user = db.session.query(User).filter_by(UID="%s" % user_UID).first()
+    products = req_data["shopping_cart"]
     total = 0
+    in_hh = False
+
     if user:
         for product in products:
-            pdt = db.session.query(Product).filter_by(id=product["product_id"]).first()
-            if (
-                isinstance(pdt.happy_hour_end, datetime.datetime)
-                and isinstance(pdt.happy_hour_start, datetime.datetime)
-                and pdt.happy_hour_price
-                and pdt.happy_hour_start < datetime.datetime.now()
-                and datetime.datetime.now() < pdt.happy_hour_end
-            ):
-                product_cost = float(pdt.happy_hour_price) * int(product["quantity"])
-            else:
+            pdt = (
+                db.session.query(Product)
+                .filter_by(code=product["product_code"])
+                .first()
+            )
+
+            if pdt:
                 product_cost = float(pdt.price) * int(product["quantity"])
 
-            total += product_cost
+                for happy_hour in pdt.happy_hours:
+                    if (
+                        isinstance(happy_hour.end, datetime.datetime)
+                        and isinstance(happy_hour.start, datetime.datetime)
+                        and happy_hour.price
+                        and happy_hour.start < datetime.datetime.now()
+                        and datetime.datetime.now() < happy_hour.end
+                    ):
+                        product_cost = float(happy_hour.price) * int(
+                            product["quantity"]
+                        )
+
+                total += product_cost
+            else:
+                return "product not found", 404
 
         if total <= user.money:
             user.money -= total
             db.session.commit()
-            print(user.money)
-            return "Transaction done", 200
+            return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
         else:
-            return "You don't have enough money", 401
+            return jsonify({"user_UID": user.UID, "user_balance": user.money}), 401
 
     else:
         return "User not found", 404
