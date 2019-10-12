@@ -2,4 +2,5 @@ To install this server, git clone this repository and look after requirements.tx
 
 To run the server:
 
+- source env/bin/activate
 - python run.py
