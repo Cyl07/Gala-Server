@@ -326,7 +326,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /get_counter_articles/{counter_id}:
+  /get_counter_products/{counter_id}:
     post: 
       summary: get all articles link to the counter
       parameters:
@@ -352,28 +352,28 @@ paths:
                 items:
                   type: object
                   properties:
-                    article_id:
+                    id:
                       type: integer
-                      description: Numeric ID of the article
-                    article_code:
+                      description: Numeric ID of the product
+                    code:
                       type: string
-                      description: Code of the article
-                    article_name:
+                      description: Code of the product
+                    name:
                       type: string
-                      description: Name of the article
-                    article_price:
+                      description: Name of the product
+                    price:
                       type: number
-                      description: Default price of the article
-                    happy_hour:
+                      description: Default price of the product
+                    happy_hours:
                       type: array
                       items:
                         type: object
                         properties: 
-                          starting_hour:
+                          start:
                             type: string
                             format: date-time
                             description: start of the happy hour
-                          ending_hour:
+                          end:
                             type: string
                             format: date-time
                             description: end of the happy hour
@@ -386,10 +386,10 @@ paths:
                           - price
                     categorie:
                       type: string
-                      description: categorie of the article
+                      description: categorie of the product
                     sub_categorie:
                       type: string
-                      description: sub_categorie of the article
+                      description: sub_categorie of the product
                   required:
                     - article_id
                     - article_code
