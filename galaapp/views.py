@@ -141,6 +141,7 @@ def get_general_history(history_size):
 
         trans_list.append(
             {
+                "id": transaction.id,
                 "user_UID": transaction.user_UID,
                 "counter_id": transaction.counter_id,
                 "computer_MAC": transaction.computer_MAC,
@@ -173,6 +174,7 @@ def get_user_history(user_UID, history_size):
 
         trans_list.append(
             {
+                "id": transaction.id,
                 "user_UID": transaction.user_UID,
                 "counter_id": transaction.counter_id,
                 "computer_MAC": transaction.computer_MAC,
@@ -205,6 +207,7 @@ def get_counter_history(counter_id, history_size):
 
         trans_list.append(
             {
+                "id": transaction.id,
                 "user_UID": transaction.user_UID,
                 "counter_id": transaction.counter_id,
                 "computer_MAC": transaction.computer_MAC,
@@ -239,6 +242,7 @@ def get_computer_history(computer_MAC, history_size):
 
         trans_list.append(
             {
+                "id": transaction.id,
                 "user_UID": transaction.user_UID,
                 "counter_id": transaction.counter_id,
                 "computer_MAC": transaction.computer_MAC,
