@@ -130,7 +130,7 @@ def get_counter_products(counter_id):
                                 + " ; "
                             )
 
-                        product_dict["happyHour"] = hh_string
+                        product_dict["happyHour"] = hh_string[:-3]
 
                         sub_categorie_dict[product.name] = product_dict
                     else:
