@@ -94,29 +94,51 @@ def buy(user_UID):
 @app.route("/get_counter_products/<int:counter_id>", methods=["POST"])
 def get_counter_products(counter_id):
     counter = db.session.query(Counter).filter_by(id=counter_id).first()
-    products = []
     if counter:
+        result = {}
+        categories = []
         for product in counter.products:
-            happy_hours = []
-            for happy_hour in product.happy_hours:
-                happy_hour_dic = {
-                    "start": happy_hour.start,
-                    "end": happy_hour.end,
-                    "price": happy_hour.price,
-                }
-                happy_hours.append(happy_hour_dic)
+            categories.append(product.categorie)
+        categories = list(dict.fromkeys(categories))
 
-            product_dic = {
-                "code": product.code,
-                "name": product.name,
-                "price": product.price,
-                "happy_hours": happy_hours,
-                "categorie": product.categorie,
-                "sub_categorie": product.sub_categorie,
-            }
-            products.append(product_dic)
+        for categorie in categories:
+            sub_categories = []
+            categorie_dict = {}
+            for product in counter.products:
+                if product.categorie == categorie:
+                    sub_categories.append(product.sub_categorie)
+            sub_categories = list(dict.fromkeys(sub_categories))
 
-        return jsonify(products), 200
+            print(categorie + "\n")
+            for sub_categorie in sub_categories:
+                products = []
+                sub_categorie_dict = {}
+                for product in counter.products:
+                    product_dict = {}
+                    if product.sub_categorie == sub_categorie:
+                        products.append(product)
+                        product_dict["uid"] = product.code
+                        product_dict["defaultPrice"] = product.price
+                        hh_string = ""
+                        for happy_hour in product.happy_hours:
+                            hh_string += (
+                                "{:%Hh%M}".format(happy_hour.start)
+                                + " - "
+                                + "{:%Hh%M}".format(happy_hour.end)
+                                + " = "
+                                + "{}".format(happy_hour.price)
+                                + " ; "
+                            )
+
+                        product_dict["happyHour"] = hh_string
+
+                        sub_categorie_dict[product.name] = product_dict
+                    else:
+                        pass
+
+                categorie_dict[sub_categorie] = sub_categorie_dict
+            result[categorie] = categorie_dict
+        return jsonify(result), 200
     else:
         return "Counter not found", 404
 
