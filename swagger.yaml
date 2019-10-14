@@ -447,52 +447,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    code:
-                      type: string
-                      description: Code of the product
-                    name:
-                      type: string
-                      description: Name of the product
-                    price:
-                      type: number
-                      description: Default price of the product
-                    happy_hours:
-                      type: array
-                      items:
-                        type: object
-                        properties: 
-                          start:
-                            type: string
-                            format: date-time
-                            description: start of the happy hour
-                          end:
-                            type: string
-                            format: date-time
-                            description: end of the happy hour
-                          price:
-                            type: number
-                            description: price during the happy hour
-                        required:
-                          - starting_hour
-                          - ending_hour
-                          - price
-                    categorie:
-                      type: string
-                      description: categorie of the product
-                    sub_categorie:
-                      type: string
-                      description: sub_categorie of the product
-                  required:
-                    - code
-                    - name
-                    - price
-                    - categorie
-                    - sub_categorie
-                minItems: 1
+                type: object
   /transfer_money:
     post:
       summary: Transfer money from a user to another
