@@ -108,8 +108,6 @@ def get_counter_products(counter_id):
                 if product.categorie == categorie:
                     sub_categories.append(product.sub_categorie)
             sub_categories = list(dict.fromkeys(sub_categories))
-
-            print(categorie + "\n")
             for sub_categorie in sub_categories:
                 products = []
                 sub_categorie_dict = {}
