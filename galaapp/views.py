@@ -83,7 +83,7 @@ def buy(user_UID):
             user.money -= total
             transaction.amount = -total
             db.session.commit()
-            return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
+            return jsonify({"transaction_id": transaction.id, "user_balance": user.money}), 200
         else:
             return jsonify({"user_UID": user.UID, "user_balance": user.money}), 401
 

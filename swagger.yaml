@@ -60,14 +60,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  user_UID:
-                    type: string
-                    description: UID of the user
+                  transaction_id:
+                    type: integer
+                    description: Numeric ID of the transaction
                   user_balance:
                     type: number
                     description: Money left of the user
                 required:
-                  - user_UID
+                  - transaction_id
                   - user_balance
         '401':
           description: You don't have enough money
