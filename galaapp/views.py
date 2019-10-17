@@ -313,3 +313,12 @@ def transfer_money():
             return jsonify({"user_UID": user2.UID, "user_balance": user2.money}), 401
     else:
         return "User not found", 404
+
+
+@app.route("/get_user_balance/<string:user_UID>", methods=["POST"])
+def get_user_balance(user_UID):
+    user = db.session.query(User).filter_by(UID=user_UID).first()
+    if user:
+        return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
+    else:
+        return "User not found", 404

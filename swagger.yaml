@@ -519,4 +519,36 @@ paths:
                   - user1_balance
                   - user2_UID
                   - user2_balance
-  
+  /get_user_balance/{user_UID}:
+    post:
+      summary: Get the balance of the choosen one
+      parameters:
+        - in: path
+          name: user_UID
+          schema: 
+            type: string
+          required: true
+          description: UID of the user
+      responses:
+        '404':
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '200':
+          description: User balance send
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_UID:
+                    type: string
+                    description: UID of the user
+                  user_balance:
+                    type: number
+                    description: Balance of the user
+                required:
+                  - user_UID
+                  - user_balance
