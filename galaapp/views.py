@@ -39,14 +39,13 @@ def buy(user_UID):
     total = 0
     shop_cart = []
 
-    transaction = Transaction()
-    transaction.user_UID = user.UID
-    transaction.counter_id = req_data["counter_id"]
-    transaction.computer_MAC = req_data["computer_MAC"]
-    transaction.time = datetime.datetime.now()
-    db.session.add(transaction)
-
     if user:
+        transaction = Transaction()
+        transaction.user_UID = user.UID
+        transaction.counter_id = req_data["counter_id"]
+        transaction.computer_MAC = req_data["computer_MAC"]
+        transaction.time = datetime.datetime.now()
+        db.session.add(transaction)
         for product in products:
             pdt = (
                 db.session.query(Product)
@@ -83,10 +82,12 @@ def buy(user_UID):
             user.money -= total
             transaction.amount = -total
             db.session.commit()
-            return jsonify({"transaction_id": transaction.id, "user_balance": user.money}), 200
+            return (
+                jsonify({"transaction_id": transaction.id, "user_balance": user.money}),
+                200,
+            )
         else:
             return jsonify({"user_UID": user.UID, "user_balance": user.money}), 401
-
     else:
         return "User not found", 404
 
