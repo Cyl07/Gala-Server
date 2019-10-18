@@ -28,7 +28,9 @@ def refilling(user_UID):
     db.session.add(transaction)
     db.session.commit()
 
-    return jsonify({"user_UID": user.UID, "user_balance": user.money}), 200
+    result = {"user_UID": user.UID, "user_balance": user.money}
+    print(type(result))
+    return jsonify(result), 200
 
 
 @app.route("/buy/<string:user_UID>", methods=["POST"])
