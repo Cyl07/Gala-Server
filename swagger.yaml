@@ -59,32 +59,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  transaction_id:
-                    type: integer
-                    description: Numeric ID of the transaction
-                  user_balance:
-                    type: number
-                    description: Money left of the user
-                required:
-                  - transaction_id
-                  - user_balance
         '401':
           description: You don't have enough money
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  user_UID:
-                    type: string
-                    description: Card UID of the user
-                  user_balance:
-                    type: integer
-                    description: Money left of the user
-                required:
-                  - user_UID
-                  - user_balance
         '404':
           description: User not found
           content:
@@ -129,16 +109,6 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  user_UID:
-                    type: string
-                    description: Card UID of the user
-                  user_balance:
-                    type: number
-                    description: Amount you credited
-                required:
-                  - user_UID
-                  - user_balance
   /get_general_history/{history_size}:
     post:
       summary: Get the general history
@@ -409,16 +379,6 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  user_UID:
-                    type: string
-                    description: UID of the user
-                  user_balance:
-                    type: number
-                    description: Money left of the user
-                required:
-                  - user_UID
-                  - user_balance
         '404':
           description: Transaction not found
           content:
@@ -485,40 +445,12 @@ paths:
             application/json:
               schema: 
                 type: object
-                properties:
-                  user_UID:
-                    type: string
-                    description: User who don't have enough money
-                  user_balance:
-                    type: number
-                    description: money left of the user
-                required:
-                  - user_UID
-                  - user_balance
         '200':
           description: Transfer done
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  user1_UID:
-                    type: string
-                    description: User who get the money
-                  user1_balance:
-                    type: number
-                    description: New amount of money of the user1
-                  user2_UID:
-                    type: string
-                    description: User who get the money
-                  user2_balance:
-                    type: number
-                    description: New amount of money of the user2
-                required:
-                  - user1_UID
-                  - user1_balance
-                  - user2_UID
-                  - user2_balance
   /get_user_balance/{user_UID}:
     post:
       summary: Get the balance of the choosen one
@@ -542,13 +474,3 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  user_UID:
-                    type: string
-                    description: UID of the user
-                  user_balance:
-                    type: number
-                    description: Balance of the user
-                required:
-                  - user_UID
-                  - user_balance
