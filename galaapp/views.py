@@ -186,7 +186,10 @@ def get_general_history(history_size):
 def get_user_history(user_UID, history_size):
     if history_size == (-1):
         transactions = (
-            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+            db.session.query(Transaction)
+            .filter_by(user_UID=user_UID)
+            .order_by(Transaction.id.desc())
+            .all()
         )
     else:
         transactions = (
@@ -225,7 +228,10 @@ def get_user_history(user_UID, history_size):
 def get_counter_history(counter_id, history_size):
     if history_size == (-1):
         transactions = (
-            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+            db.session.query(Transaction)
+            .filter_by(counter_id=counter_id)
+            .order_by(Transaction.id.desc())
+            .all()
         )
     else:
         transactions = (
@@ -266,7 +272,10 @@ def get_counter_history(counter_id, history_size):
 def get_computer_history(computer_MAC, history_size):
     if history_size == (-1):
         transactions = (
-            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+            db.session.query(Transaction)
+            .filter_by(computer_MAC=computer_MAC)
+            .order_by(Transaction.id.desc())
+            .all()
         )
     else:
         transactions = (
