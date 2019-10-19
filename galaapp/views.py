@@ -144,9 +144,9 @@ def get_counter_products(counter_id):
         return "Counter not found", 404
 
 
-@app.route("/get_general_history/<int:history_size>", methods=["POST"])
+@app.route("/get_general_history/<int(signed=True):history_size>", methods=["POST"])
 def get_general_history(history_size):
-    if history_size == (-1):
+    if history_size < 0:
         transactions = (
             db.session.query(Transaction).order_by(Transaction.id.desc()).all()
         )
@@ -182,9 +182,12 @@ def get_general_history(history_size):
     return jsonify(trans_list), 200
 
 
-@app.route("/get_user_history/<string:user_UID>/<int:history_size>", methods=["POST"])
+@app.route(
+    "/get_user_history/<string:user_UID>/<int(signed=True):history_size>",
+    methods=["POST"],
+)
 def get_user_history(user_UID, history_size):
-    if history_size == (-1):
+    if history_size < 0:
         transactions = (
             db.session.query(Transaction)
             .filter_by(user_UID=user_UID)
@@ -224,9 +227,12 @@ def get_user_history(user_UID, history_size):
     return jsonify(trans_list), 200
 
 
-@app.route("/get_counter_history/<int:counter_id>/<int:history_size>", methods=["POST"])
+@app.route(
+    "/get_counter_history/<int:counter_id>/<int(signed=True):history_size>",
+    methods=["POST"],
+)
 def get_counter_history(counter_id, history_size):
-    if history_size == (-1):
+    if history_size < 0:
         transactions = (
             db.session.query(Transaction)
             .filter_by(counter_id=counter_id)
@@ -267,10 +273,11 @@ def get_counter_history(counter_id, history_size):
 
 
 @app.route(
-    "/get_computer_history/<string:computer_MAC>/<int:history_size>", methods=["POST"]
+    "/get_computer_history/<string:computer_MAC>/<int(signed=True):history_size>",
+    methods=["POST"],
 )
 def get_computer_history(computer_MAC, history_size):
-    if history_size == (-1):
+    if history_size < 0:
         transactions = (
             db.session.query(Transaction)
             .filter_by(computer_MAC=computer_MAC)
