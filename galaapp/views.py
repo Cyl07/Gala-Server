@@ -146,11 +146,17 @@ def get_counter_products(counter_id):
 
 @app.route("/get_general_history/<int:history_size>", methods=["POST"])
 def get_general_history(history_size):
-    transactions = (
-        db.session.query(Transaction)
-        .order_by(Transaction.id.desc())
-        .slice(0, history_size)
-    )
+    if history_size == (-1):
+        transactions = (
+            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+        )
+    else:
+        transactions = (
+            db.session.query(Transaction)
+            .order_by(Transaction.id.desc())
+            .slice(0, history_size)
+        )
+
     trans_list = []
     for transaction in transactions:
         shopping_cart = []
@@ -178,12 +184,18 @@ def get_general_history(history_size):
 
 @app.route("/get_user_history/<string:user_UID>/<int:history_size>", methods=["POST"])
 def get_user_history(user_UID, history_size):
-    transactions = (
-        db.session.query(Transaction)
-        .filter_by(user_UID=user_UID)
-        .order_by(Transaction.id.desc())
-        .slice(0, history_size)
-    )
+    if history_size == (-1):
+        transactions = (
+            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+        )
+    else:
+        transactions = (
+            db.session.query(Transaction)
+            .filter_by(user_UID=user_UID)
+            .order_by(Transaction.id.desc())
+            .slice(0, history_size)
+        )
+
     trans_list = []
     for transaction in transactions:
         shopping_cart = []
@@ -211,12 +223,18 @@ def get_user_history(user_UID, history_size):
 
 @app.route("/get_counter_history/<int:counter_id>/<int:history_size>", methods=["POST"])
 def get_counter_history(counter_id, history_size):
-    transactions = (
-        db.session.query(Transaction)
-        .filter_by(counter_id=counter_id)
-        .order_by(Transaction.id.desc())
-        .slice(0, history_size)
-    )
+    if history_size == (-1):
+        transactions = (
+            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+        )
+    else:
+        transactions = (
+            db.session.query(Transaction)
+            .filter_by(counter_id=counter_id)
+            .order_by(Transaction.id.desc())
+            .slice(0, history_size)
+        )
+
     trans_list = []
     for transaction in transactions:
         shopping_cart = []
@@ -246,12 +264,18 @@ def get_counter_history(counter_id, history_size):
     "/get_computer_history/<string:computer_MAC>/<int:history_size>", methods=["POST"]
 )
 def get_computer_history(computer_MAC, history_size):
-    transactions = (
-        db.session.query(Transaction)
-        .filter_by(computer_MAC=computer_MAC)
-        .order_by(Transaction.id.desc())
-        .slice(0, history_size)
-    )
+    if history_size == (-1):
+        transactions = (
+            db.session.query(Transaction).order_by(Transaction.id.desc()).all()
+        )
+    else:
+        transactions = (
+            db.session.query(Transaction)
+            .filter_by(computer_MAC=computer_MAC)
+            .order_by(Transaction.id.desc())
+            .slice(0, history_size)
+        )
+
     trans_list = []
     for transaction in transactions:
         shopping_cart = []
