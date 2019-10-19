@@ -128,43 +128,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    user_UID:
-                      type: string
-                      description: Card UID of the user
-                    counter_id:
-                      type: integer
-                      description: ID of the counter
-                    computer_MAC:
-                      type: string
-                      description: MAC adress of the computer
-                    amount:
-                      type: number
-                      description: amount when you refill your card
-                    time:
-                      type: string
-                      format: date-time
-                      description: datetime of the transaction
-                    shopping_cart:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          product_code:
-                            type: string
-                            description: Code corresponding to the product
-                          quantity:
-                            type: integer
-                            description: Quantity of the product bought
-                        required:
-                          - product_code
-                          - quantity
-                      minItems: 1                  
-                  required:
-                      - user_UID
-                      - counter_id
-                      - computer_MAC
-                  minItems: 1
+                minItems: 1
   /get_user_history/{user_UID}/{history_size}:
     post:
       summary: Get the specifier user history
@@ -190,40 +154,6 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    user_UID:
-                      type: string
-                      description: Card UID of the user
-                    counter_id:
-                      type: integer
-                      description: ID of the counter
-                    computer_MAC:
-                      type: string
-                      description: MAC adress of the computer
-                    time:
-                      type: string
-                      format: date-time
-                      description: datetime of the transaction
-                    shopping_cart:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          product_code:
-                            type: string
-                            description: Code corresponding to the product
-                          quantity:
-                            type: integer
-                            description: Quantity of the product bought
-                        required:
-                          - product_code
-                          - quantity
-                      minItems: 1                  
-                  required:
-                      - user_UID
-                      - counter_id
-                      - computer_MAC
-                      - shopping_cart
                 minItems: 1
   /get_counter_history/{counter_id}/{history_size}:
     post:
@@ -250,41 +180,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    user_UID:
-                      type: string
-                      description: Card UID of the user
-                    counter_id:
-                      type: integer
-                      description: ID of the counter
-                    computer_MAC:
-                      type: string
-                      description: MAC adress of the computer
-                    time:
-                      type: string
-                      format: date-time
-                      description: datetime of the transaction
-                    shopping_cart:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          product_code:
-                            type: string
-                            description: Code corresponding to the product
-                          quantity:
-                            type: integer
-                            description: Quantity of the product bought
-                        required:
-                          - product_code
-                          - quantity
-                      minItems: 1                  
-                  required:
-                      - user_UID
-                      - counter_id
-                      - computer_MAC
-                      - shopping_cart
-                  minItems: 1
+                minItems: 1
   /get_computer_history/{computer_MAC}/{history_size}:
     post:
       summary: Get the specifier computer history
@@ -310,41 +206,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    user_UID:
-                      type: string
-                      description: Card UID of the user
-                    counter_id:
-                      type: integer
-                      description: ID of the counter
-                    computer_MAC:
-                      type: string
-                      description: MAC adress of the computer
-                    time:
-                      type: string
-                      format: date-time
-                      description: datetime of the transaction
-                    shopping_cart:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          product_code:
-                            type: string
-                            description: Code corresponding to the product
-                          quantity:
-                            type: integer
-                            description: Quantity of the product bought
-                        required:
-                          - product_code
-                          - quantity
-                      minItems: 1                  
-                  required:
-                      - user_UID
-                      - counter_id
-                      - computer_MAC
-                      - shopping_cart
-                  minItems: 1
+                minItems: 1
   /refund/{transaction_id}:
     post:
       summary: Undo a transaction
